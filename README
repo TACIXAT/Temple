@@ -13,7 +13,7 @@ The current types are:
 	Double Word
 	Quad Word
 	String
-		Requires either a length specifier (can be another variable) or a terminator.
+		Requires either a length specifier or a terminator.
 	Variable Length
 		Same as String?
 	Fixed Value
@@ -21,13 +21,14 @@ The current types are:
 	Unknown Chunk
 		Binary blob.
 
-The meta types are (ie: applied to the types):
+The meta types (ie: applied to the types) are:
 	Length
 		Marks a variable as the length of another.
 	Count
 		Marks a variable as the count of a set of variables.
 	Switch
-		Marks a variable as a switch for some set of variables or groups. (Think switch / case.)
+		Marks a variable as a switch for some set of variables or groups. 
+		(Think switch / case.)
 	Group
 		Some group of variables.
 	Signed
