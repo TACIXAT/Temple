@@ -1,0 +1,41 @@
+Temple is for the rapid (graphical) creation of file format templates.
+
+The program will be written with QT and C++. In active development through the year end. This is my first C++ program, please notify me of any glaring errors.
+
+Feature goals: 
+	Graphical file format template building.
+	Display of template over the hexdump of a file.
+	Automatic generation of Python from template.
+
+The current types are:
+	Byte
+	Word
+	Double Word
+	Quad Word
+	String
+		Requires either a length specifier (can be another variable) or a terminator.
+	Variable Length
+		Same as String?
+	Fixed Value
+		Magic number sort of deal. A value that should always be the same.
+	Unknown Chunk
+		Binary blob.
+
+The meta types are (ie: applied to the types):
+	Length
+		Marks a variable as the length of another.
+	Count
+		Marks a variable as the count of a set of variables.
+	Switch
+		Marks a variable as a switch for some set of variables or groups. (Think switch / case.)
+	Group
+		Some group of variables.
+	Signed
+	Unsigned
+	Big Endian
+	Little Endian
+	Terminator
+		Identifies the terminating character of a variable length chunk.
+		
+I believe these types will allow the parsing of most file formats. Please notify me of any conditions they would not meet.
+		
