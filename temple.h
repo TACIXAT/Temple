@@ -22,6 +22,7 @@
 #include <QMenuBar>
 #include <QToolBar>
 
+//magic
 class TempleWin : public QMainWindow {
 	Q_OBJECT
 	
@@ -44,6 +45,5 @@ class TBar : public QWidget {
     	void onDoub();
     	void onQuad();	
 };
-
 
 #endif

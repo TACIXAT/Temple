@@ -20,7 +20,9 @@ TempleWin::TempleWin(QWidget *parent)
 	
 	connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
 	
+	//toolbar
 	QToolBar *tb = new QToolBar("TOOLBAR");
+	
 	TBar *tbw = new TBar(this);
 	tb->addWidget(tbw);
 	tb->setMovable(false);
@@ -30,6 +32,7 @@ TempleWin::TempleWin(QWidget *parent)
 TBar::TBar(QWidget *parent)
 	: QWidget(parent) {
 	
+	//types
 	QPushButton *byte = new QPushButton("B");
 	byte->setFixedSize(35,35);
 	byte->setToolTip("Byte");
@@ -70,12 +73,14 @@ TBar::TBar(QWidget *parent)
 	character->setFixedSize(35,35);
 	character->setToolTip("Character");
 	
+	//horizontal rule
 	QFrame *frame = new QFrame();
 	frame->setFrameShape(QFrame::HLine);
 	frame->setFrameShadow(QFrame::Sunken);
 	frame->setLineWidth(1);
 	frame->setMidLineWidth(0);
-
+	
+	//meta types
 	QPushButton *len = new QPushButton("L");
 	len->setFixedSize(35,35);
 	len->setToolTip("Length");
@@ -104,7 +109,10 @@ TBar::TBar(QWidget *parent)
 	terminator->setFixedSize(35,35);
 	terminator->setToolTip("Terminator");
 	
+	//layout
 	QGridLayout *grid = new QGridLayout(this);
+	
+	//add type buttons
 	grid->addWidget(byte, 0, 0);
 	grid->addWidget(word, 0, 1);
 	grid->addWidget(dword, 1, 0);
@@ -131,6 +139,7 @@ TBar::TBar(QWidget *parent)
 }
 
 
+//currently useless
 void TBar::onByte(){
 	int i = 3;
 	i++;
