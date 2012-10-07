@@ -20,17 +20,17 @@ class Byte : public Type {
 		Byte();
 };
 
-class Word {
+class Word : public Type {
 	public:
 		Word();
 };
 
-class Doub {
+class Doub : public Type {
 	public:
 		Doub();
 };
 
-class Quad {
+class Quad : public Type {
 	public:
 		Quad();
 };
