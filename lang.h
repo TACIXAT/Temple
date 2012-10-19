@@ -1,7 +1,7 @@
+#include <vector>
+
 #ifndef LANG_H
 #define LANG_H
-
-#include <vector>
 
 class Type {
 	public:
@@ -12,7 +12,7 @@ class Type {
 	protected:
 		unsigned char size;
 		bool sign;
-		std::vector<unsigned char> val;
+		std::vector<unsigned char> *val;
 };
 
 class Byte : public Type {
@@ -34,5 +34,21 @@ class Quad : public Type {
 	public:
 		Quad();
 };
+
+class VLen {
+	public:
+		VLen(bool hasTerm, std::vector<unsigned char> *tid, int length);
+		int getLen();
+		std::vector<unsigned char> *getTerm();
+		std::vector<unsigned char> *getLenID();
+		bool hasTerm();
+		
+	private:
+		bool hasTerminator;
+		std::vector<unsigned char> *terminator;
+		std::vector<unsigned char> *lengthIdentifier;
+		int length;
+};
+
 
 #endif

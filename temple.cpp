@@ -32,6 +32,18 @@ TempleWin::TempleWin(QWidget *parent)
 TBar::TBar(QWidget *parent)
 	: QWidget(parent) {
 	
+	TBar::file = new QFile("/tmp/storage.txt");
+
+   	if(TBar::file->open(QFile::WriteOnly)) {
+		TBar::out = new QTextStream(file);
+		*TBar::out << "File opened" << endl;
+   	}
+	//file("/tmp/testy.txt");
+	//file.open(QFile::WriteOnly);
+	//add QFile and QTextStream to TBar
+	//Initialize here
+	//on*() will access those
+	
 	//types
 	QPushButton *byte = new QPushButton("B");
 	byte->setFixedSize(35,35);
@@ -141,23 +153,25 @@ TBar::TBar(QWidget *parent)
 
 //currently useless
 void TBar::onByte(){
-	int i = 3;
-	i++;
+	//QTextStream out(&file);
+	*TBar::out << "B:";
+	TBar::out->flush();
+	
 }
 
 void TBar::onWord(){
-	int i = 3;
-	i++;
+	*TBar::out << "W:";
+	TBar::out->flush();
 }
 
 void TBar::onDoub(){
-	int i = 3;
-	i++;
+	*TBar::out << "D:";
+	TBar::out->flush();
 }
 
 void TBar::onQuad(){
-	int i = 3;
-	i++;
+	*TBar::out << "Q:";
+	TBar::out->flush();
 }
 
 

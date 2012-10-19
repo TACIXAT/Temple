@@ -13,8 +13,8 @@
 #include <QFrame>
 #include <QGridLayout>
 #include <QPushButton>
-//#include <QTextStream>
-//#include <QFile>
+#include <QTextStream>
+#include <QFile>
 //#include <QList>
 #include <QIcon>
 #include <QLabel>
@@ -38,6 +38,8 @@ class TBar : public QWidget {
 	
 	public:
 		TBar(QWidget *parent);
+		QFile *file;
+		QTextStream *out;
 		
 	private slots:
 	    void onByte();
