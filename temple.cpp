@@ -8,6 +8,7 @@
 #include "graph.h"
 #define DEBUG 1
 
+/* \x41\x41\x41\x41\x41\x41\x41 */
 TempleWin::TempleWin(QWidget *parent)
 	: QMainWindow(parent) {
 	
@@ -42,6 +43,7 @@ void TempleWin::zoomOut() {
 	w->zoomOut();
 }
 
+/* \x41\x41\x41\x41\x41\x41\x41 */
 TBar::TBar(QWidget *parent)
 	: QWidget(parent) {
 	
@@ -61,15 +63,15 @@ TBar::TBar(QWidget *parent)
 	QPushButton *byte = new QPushButton("B");
 	byte->setFixedSize(35,35);
 	byte->setToolTip("Byte");
-	//connect(byte, SIGNAL(clicked()), this, SLOT(onByte()));
-	connect(byte, SIGNAL(clicked()), parentWidget(), SLOT(zoomIn()));
+	connect(byte, SIGNAL(clicked()), this, SLOT(onByte()));
+	//connect(byte, SIGNAL(clicked()), parentWidget(), SLOT(zoomIn()));
 	
 	
 	QPushButton *word = new QPushButton("W");
 	word->setFixedSize(35,35);
 	word->setToolTip("Word");
-	//connect(word, SIGNAL(clicked()), this, SLOT(onWord()));
-	connect(word, SIGNAL(clicked()), parentWidget(), SLOT(zoomOut()));
+	connect(word, SIGNAL(clicked()), this, SLOT(onWord()));
+	//connect(word, SIGNAL(clicked()), parentWidget(), SLOT(zoomOut()));
 	
 	QPushButton *dword = new QPushButton("D");
 	dword->setFixedSize(35,35);
@@ -166,7 +168,6 @@ TBar::TBar(QWidget *parent)
 	//*/
 }
 
-
 //currently useless
 void TBar::onByte(){
 	//QTextStream out(&file);
@@ -190,8 +191,7 @@ void TBar::onQuad(){
 	TBar::out->flush();
 }
 
-/*aaaaaaaaaaa*/
-
+/* \x41\x41\x41\x41\x41\x41\x41 */
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);

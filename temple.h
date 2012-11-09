@@ -23,8 +23,7 @@
 #include <QMenuBar>
 #include <QToolBar>
 
-
-//magic
+/* \x41\x41\x41\x41\x41\x41\x41 */
 class TempleWin : public QMainWindow {
 	Q_OBJECT
 	
@@ -40,6 +39,7 @@ class TempleWin : public QMainWindow {
     	GLWidget *w;
 };
 
+/* \x41\x41\x41\x41\x41\x41\x41 */
 class TBar : public QWidget {
 	Q_OBJECT
 	
@@ -53,13 +53,6 @@ class TBar : public QWidget {
     	void onWord();
     	void onDoub();
     	void onQuad();	
-};
-
-class Templar : public QWidget {
-	Q_OBJECT
-	
-	public:
-		Templar(QWidget *parent);
 };
 
 #endif

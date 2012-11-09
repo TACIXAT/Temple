@@ -1,21 +1,14 @@
 #include "graph.h"
 #include <QtOpenGL/QGLWidget>
 
-/*aaaaaaaaaaa*/
+/* \x41\x41\x41\x41\x41\x41\x41 */
 GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent) {
     setMouseTracking(true);
     lastPos = new QPointF(-1.0,-1.0);
     scale = 0;
-    increment = 0.1;
-    float temp[20] = {
-    			20.0f, 10.0f, 6.66f, 5.0f, 4.001f,
-    		 	3.33f, 2.85f, 2.0f, 2.0f, 2.0f, 2.0f, 
-    		 	3.0f, 4.0f, 5.0f, 6.0f, 
-    		 	5.0f, 4.0f, 3.0f, 2.0f, 1.0f};
-   	for(int i=0; i<20; i++){
-   		dragScale[i] = temp[i];
-   	}
-   	
+    increment = 0.2;
+    range[0] = -4;
+    range[1] = 5;
 }
 
 void GLWidget::initializeGL() {
@@ -30,39 +23,32 @@ void GLWidget::initializeGL() {
 
 void GLWidget::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
-    glMatrixMode(GL_PROJECTION);
+    /*glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0); // set origin to bottom left corner
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    glLoadIdentity();//*/
 }
 
 void GLWidget::paintGL() {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glColor3f(0.5f, 0.79f, 1.0f);
-    glRectf(-0.2f, 0.2f, 0.2f, 0.0f);
-    glColor3f(0.35f, 0.75f, 1.0f);
-    glRectf(-0.2f, 0.5f, 0.2f, 0.3f);
-    /*glBegin(GL_QUADS);
-    glVertex2f(-0.5,-0.5);
-    glVertex2f(0.5,0.5);
-    glVertex2f(-0.5,0.5);
-    glVertex2f(-0.5,0.5);//*/
+	drawGraph();	
     glEnd();
 }
 
 void GLWidget::drawGraph(){
 	glClear(GL_COLOR_BUFFER_BIT);
-    glColor3f(1.0f, 0.9f, 0.2f);
-    glRectf(-0.2f, 0.2f, 0.2f, 0.0f);
-    glColor3f(0.2f, 0.6f, 1.0f);
-    glRectf(-0.2f, 0.5f, 0.2f, 0.3f);
+	glColor3f(0.2f, 0.2f, 1.0f);
+    glRectf(-0.1f, 0.4f, 0.1f, 0.3f);
+    glColor3f(1.0f, 0.2f, 0.2f);
+    glRectf(-0.1f, 0.25f, 0.1f, 0.15f);
+    glColor3f(0.2f, 1.0f, 0.2f);
+    glRectf(-0.5f, 0.75f, -0.3f, 0.65f);
 }
 
-
+//Change zoom center to be at mouse location rather than originally drawn center
 void GLWidget::zoomIn(){
 	float base = 1.0 + increment * scale;
-	scale += (scale == 10) ? 0 : 1;
+	scale += (scale != range[1]) ? 1 : 0;
 	float next = 1.0 + increment * scale;
 	float zoom = next / base;
 	//printf("zoom level %f\nscale %d\n", next, scale);
@@ -74,34 +60,37 @@ void GLWidget::zoomIn(){
 
 void GLWidget::zoomOut(){
 	float base = 1.0 + increment * scale;
-	scale += (scale == -9) ? 0 : -1;
+	scale += (scale != range[0]) ? -1 : 0;
 	float next = 1.0 + increment * scale;
-	//printf("zoom level %f\nscale %d\n", next, scale);
 	float zoom = next / base;
+	//printf("zoom level %f\nscale %d\n", next, scale);
 	glScalef(zoom, zoom, zoom);
 	GLWidget::drawGraph();
 	glEnd();
 	swapBuffers();
 }
 
+/* EVENTS */
 void GLWidget::mousePressEvent(QMouseEvent *event) {
 	lastPos->setX(event->posF().x());
 	lastPos->setY(event->posF().y());
-	int winx = this->geometry().bottomRight().x();
-	int winy = this->geometry().bottomRight().y();
-	glClear(GL_COLOR_BUFFER_BIT);
-    glColor3f((float)event->x()/winx, (float)event->y()/winy, (float)(event->y()*event->x())/(winx));
-    glRectf(-0.2f, 0.2f, 0.2f, 0.0f);
-    glColor3f((float)event->y()/winy, (float)(event->y()*event->x())/(winx*winy), (float)event->x()/winx);
-    glRectf(-0.2f, 0.5f, 0.2f, 0.3f);
-    //glScalef(1.1f, 1.1f, 1.1f);
-    /*glBegin(GL_QUADS);
-    glVertex2f(-0.5,-0.5);
-    glVertex2f(0.5,0.5);
-    glVertex2f(-0.5,0.5);
-    glVertex2f(-0.5,0.5);//*/
-    glEnd();
-    swapBuffers();
+}
+
+void GLWidget::mouseDoubleClickEvent(QMouseEvent *event) {
+	Qt::MouseButtons pressed = event->buttons();
+	
+	if(pressed != Qt::NoButton){
+		switch(pressed){
+			case Qt::LeftButton:
+				zoomIn();
+				break;
+			case Qt::RightButton:
+				zoomOut();
+				break;
+			default:
+				break;
+		}
+	} 
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event) {
@@ -117,10 +106,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
 				deltaY = lastPos->y() - event->posF().y();
 				lastPos->setX(event->x());
 				lastPos->setY(event->y());
-				//printf("dx:%f dy:%f\n", deltaX, deltaY);
-				//printf("cx:%f cy:%f\n\n", deltaX/winx, deltaY/winy);
-				//printf("winx:%d winy:%d\nex:%d ey:%d\nlx:%d ly%d\n\n", winx, winy, event->x(), event->y(), lastPos->x(), lastPos->y());
-				glTranslatef(deltaX/(winx*0.5*(1.0 + 0.1*scale)), deltaY/(winy*0.5*(1.0 + 0.1*scale)), 0); 
+				glTranslatef(deltaX / (winx * 0.5 * (1.0 + increment * scale)), deltaY / (winy * 0.5 * (1.0 + increment * scale)), 0); 
 				//half the window width or height because 0 is at center, scaled appropriately
 				GLWidget::drawGraph();
 				glEnd();
@@ -132,7 +118,6 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
 	} /*else {
 		printf("no button %d %d\n", event->x(), event->y()); 	
 	}//*/
-    //printf("%f, %d\n", 1.0f/event->x(), event->y());
 }
 
 void GLWidget::keyPressEvent(QKeyEvent* event) {
