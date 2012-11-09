@@ -7,6 +7,7 @@
 #ifndef TEMPLE_H
 #define TEMPLE_H
 
+#include "graph.h"
 #include <QMainWindow>
 #include <QApplication>
 #include <QWidget>
@@ -22,6 +23,7 @@
 #include <QMenuBar>
 #include <QToolBar>
 
+
 //magic
 class TempleWin : public QMainWindow {
 	Q_OBJECT
@@ -29,8 +31,13 @@ class TempleWin : public QMainWindow {
 	public:
 		TempleWin(QWidget *parent = 0);
 		
+	public slots:
+		void zoomIn();
+		void zoomOut();
+		
 	private:
     	QLabel *label;
+    	GLWidget *w;
 };
 
 class TBar : public QWidget {
@@ -46,6 +53,13 @@ class TBar : public QWidget {
     	void onWord();
     	void onDoub();
     	void onQuad();	
+};
+
+class Templar : public QWidget {
+	Q_OBJECT
+	
+	public:
+		Templar(QWidget *parent);
 };
 
 #endif

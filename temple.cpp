@@ -5,7 +5,7 @@
 /* If you find this program useful I would love to hear about it. */
 
 #include "temple.h"
-
+#include "graph.h"
 #define DEBUG 1
 
 TempleWin::TempleWin(QWidget *parent)
@@ -27,6 +27,19 @@ TempleWin::TempleWin(QWidget *parent)
 	tb->addWidget(tbw);
 	tb->setMovable(false);
 	addToolBar(Qt::RightToolBarArea, tb);
+	
+	TempleWin::w = new GLWidget();
+	w->show();
+	w->resize(200,200);
+	setCentralWidget(w);
+}
+
+void TempleWin::zoomIn() {
+	w->zoomIn();
+}
+
+void TempleWin::zoomOut() {
+	w->zoomOut();
 }
 
 TBar::TBar(QWidget *parent)
@@ -48,12 +61,15 @@ TBar::TBar(QWidget *parent)
 	QPushButton *byte = new QPushButton("B");
 	byte->setFixedSize(35,35);
 	byte->setToolTip("Byte");
-	connect(byte, SIGNAL(clicked()), this, SLOT(onByte()));
+	//connect(byte, SIGNAL(clicked()), this, SLOT(onByte()));
+	connect(byte, SIGNAL(clicked()), parentWidget(), SLOT(zoomIn()));
+	
 	
 	QPushButton *word = new QPushButton("W");
 	word->setFixedSize(35,35);
 	word->setToolTip("Word");
-	connect(word, SIGNAL(clicked()), this, SLOT(onWord()));
+	//connect(word, SIGNAL(clicked()), this, SLOT(onWord()));
+	connect(word, SIGNAL(clicked()), parentWidget(), SLOT(zoomOut()));
 	
 	QPushButton *dword = new QPushButton("D");
 	dword->setFixedSize(35,35);
@@ -174,6 +190,7 @@ void TBar::onQuad(){
 	TBar::out->flush();
 }
 
+/*aaaaaaaaaaa*/
 
 int main(int argc, char *argv[])
 {
@@ -183,7 +200,7 @@ int main(int argc, char *argv[])
 
     window.resize(750, 500);
     window.setWindowTitle("Temple");
-    window.setWindowIcon(QIcon("icon2.png"));
+    window.setWindowIcon(QIcon("icons/icon2.png"));
     window.show();
 
     return app.exec();
