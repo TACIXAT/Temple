@@ -4,7 +4,7 @@
 /*aaaaaaaaaaa*/
 GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent) {
     setMouseTracking(true);
-    lastPos = new QPoint(-1,-1);
+    lastPos = new QPointF(-1.0,-1.0);
     scale = 0;
     increment = 0.1;
     float temp[20] = {
@@ -59,9 +59,34 @@ void GLWidget::drawGraph(){
     glRectf(-0.2f, 0.5f, 0.2f, 0.3f);
 }
 
+
+void GLWidget::zoomIn(){
+	float base = 1.0 + increment * scale;
+	scale += (scale == 10) ? 0 : 1;
+	float next = 1.0 + increment * scale;
+	float zoom = next / base;
+	//printf("zoom level %f\nscale %d\n", next, scale);
+	glScalef(zoom, zoom, zoom);
+	GLWidget::drawGraph();
+	glEnd();
+	swapBuffers();
+}
+
+void GLWidget::zoomOut(){
+	float base = 1.0 + increment * scale;
+	scale += (scale == -9) ? 0 : -1;
+	float next = 1.0 + increment * scale;
+	//printf("zoom level %f\nscale %d\n", next, scale);
+	float zoom = next / base;
+	glScalef(zoom, zoom, zoom);
+	GLWidget::drawGraph();
+	glEnd();
+	swapBuffers();
+}
+
 void GLWidget::mousePressEvent(QMouseEvent *event) {
-	lastPos->setX(event->x());
-	lastPos->setY(event->y());
+	lastPos->setX(event->posF().x());
+	lastPos->setY(event->posF().y());
 	int winx = this->geometry().bottomRight().x();
 	int winy = this->geometry().bottomRight().y();
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -79,30 +104,6 @@ void GLWidget::mousePressEvent(QMouseEvent *event) {
     swapBuffers();
 }
 
-void GLWidget::zoomIn(){
-	float base = 1.0 + increment * scale;
-	scale += (scale == 10) ? 0 : 1;
-	float next = 1.0 + increment * scale;
-	float zoom = next / base;
-	printf("zoom level %f\nscale %d\n", next, scale);
-	glScalef(zoom, zoom, zoom);
-	GLWidget::drawGraph();
-	glEnd();
-	swapBuffers();
-}
-
-void GLWidget::zoomOut(){
-	float base = 1.0 + increment * scale;
-	scale += (scale == -9) ? 0 : -1;
-	float next = 1.0 + increment * scale;
-	printf("zoom level %f\nscale %d\n", next, scale);
-	float zoom = next / base;
-	glScalef(zoom, zoom, zoom);
-	GLWidget::drawGraph();
-	glEnd();
-	swapBuffers();
-}
-
 void GLWidget::mouseMoveEvent(QMouseEvent *event) {
 	int winx = this->geometry().bottomRight().x();
 	int winy = this->geometry().bottomRight().y();
@@ -112,14 +113,15 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
 	if(pressed != Qt::NoButton){
 		switch(pressed){
 			case Qt::LeftButton:
-				deltaX = event->x() - lastPos->x();
-				deltaY = lastPos->y() - event->y();
+				deltaX = event->posF().x() - lastPos->x();
+				deltaY = lastPos->y() - event->posF().y();
 				lastPos->setX(event->x());
 				lastPos->setY(event->y());
 				//printf("dx:%f dy:%f\n", deltaX, deltaY);
 				//printf("cx:%f cy:%f\n\n", deltaX/winx, deltaY/winy);
 				//printf("winx:%d winy:%d\nex:%d ey:%d\nlx:%d ly%d\n\n", winx, winy, event->x(), event->y(), lastPos->x(), lastPos->y());
-				glTranslatef(deltaX/winx * dragScale[scale+9], deltaY/winy * dragScale[scale+9], 0);	//fix this - each move event updates last pos, delta pos
+				glTranslatef(deltaX/(winx*0.5*(1.0 + 0.1*scale)), deltaY/(winy*0.5*(1.0 + 0.1*scale)), 0); 
+				//half the window width or height because 0 is at center, scaled appropriately
 				GLWidget::drawGraph();
 				glEnd();
 				swapBuffers();

@@ -21,7 +21,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void drawGraph();
-    QPoint *lastPos;
+    QPointF *lastPos;
     int scale;
     float increment;
     float dragScale[20];
