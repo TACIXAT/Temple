@@ -35,13 +35,13 @@ TempleWin::TempleWin(QWidget *parent)
 	setCentralWidget(w);
 }
 
-void TempleWin::zoomIn() {
+/*void TempleWin::zoomIn() {
 	w->zoomIn();
 }
 
 void TempleWin::zoomOut() {
-	w->zoomOut();
-}
+	w->zoomOut(0.0f, 0.0f);
+}//*/
 
 /* \x41\x41\x41\x41\x41\x41\x41 */
 TBar::TBar(QWidget *parent)

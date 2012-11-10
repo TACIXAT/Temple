@@ -30,9 +30,9 @@ class TempleWin : public QMainWindow {
 	public:
 		TempleWin(QWidget *parent = 0);
 		
-	public slots:
-		void zoomIn();
-		void zoomOut();
+	//public slots:
+		//void zoomIn();
+		//void zoomOut();
 		
 	private:
     	QLabel *label;
