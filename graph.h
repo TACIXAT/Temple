@@ -27,7 +27,7 @@ protected:
     int scale;			//track zoom level
     int range[2];		//range of zoom level (cannot scale to zero, bounded above at 2x)
     float increment;	//the delta scale, usually 0.2 (zoom levels would be 1.2, 1.4, 1.6, etc. from the **original** scale)
-	float centerX, centerY;
+	float centerX, centerY, offsetX, offsetY, totalChangeX, totalChangeY;
 };
 
 #endif

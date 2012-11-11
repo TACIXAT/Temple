@@ -6,6 +6,10 @@
 GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent) {
     setMouseTracking(true);
     lastPos = new QPointF(-1.0,-1.0);
+    offsetX = 0.0;
+    offsetY = 0.0;
+    totalChangeX = 0.0;
+    totalChangeY = 0.0;
     scale = 0;
     increment = 0.2;
     range[0] = -4;
@@ -26,8 +30,8 @@ void GLWidget::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
     centerX = this->geometry().bottomRight().x() / 2.0f;
 	centerY = this->geometry().bottomRight().y() / 2.0f;
-    /*glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+    glMatrixMode(GL_PROJECTION);
+    /*glLoadIdentity();
     glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0); // set origin to bottom left corner
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();//*/
@@ -58,6 +62,8 @@ void GLWidget::drawGraph(){
 void GLWidget::zoomIn(QPointF *to){
 	QPointF *origin = new QPointF(centerX, centerY);
 
+	//printf("%f\t%f\n", to->x(), to->y());
+
 	float dx = getDxF(to, origin, false);	//this move is from the origin to the original position
 	float dy = getDyF(to, origin, false);
 	
@@ -66,8 +72,13 @@ void GLWidget::zoomIn(QPointF *to){
 	float next = 1.0 + increment * scale;
 	float zoom = next / base;
 	
+	dx -= totalChangeX;
+	dy -= totalChangeY;
+	
+	//printf("%f\t%f\n\n", dx, dy);
+	
 	glTranslatef(dx, dy, 0);		//move back (from origin => to)
-	glScalef(zoom, zoom, zoom);
+	glScalef(zoom, zoom, 0);
 	glTranslatef(-dx, -dy, 0);		//negative for move to origin, this happens first
 	GLWidget::drawGraph();
 	glEnd();
@@ -76,7 +87,9 @@ void GLWidget::zoomIn(QPointF *to){
 
 void GLWidget::zoomOut(QPointF *to){
 	QPointF *origin = new QPointF(centerX, centerY);
-
+	
+	//printf("%f\t%f\n", to->x(), to->y());
+	
 	float dx = getDxF(to, origin, false);	//this move is from the origin to the original position
 	float dy = getDyF(to, origin, false);
 	
@@ -84,9 +97,14 @@ void GLWidget::zoomOut(QPointF *to){
 	scale += (scale != range[0]) ? -1 : 0;
 	float next = 1.0 + increment * scale;
 	float zoom = next / base;
+	
+	dx -= totalChangeX;
+	dy -= totalChangeY;
+	
+	//printf("%f\t%f\n\n", dx, dy);
 
 	glTranslatef(dx, dy, 0);		//move back (from origin => to)
-	glScalef(zoom, zoom, zoom);
+	glScalef(zoom, zoom, 0);
 	glTranslatef(-dx, -dy, 0);		//negative for move to origin, this happens first
 	GLWidget::drawGraph();
 	glEnd();
@@ -99,22 +117,20 @@ void GLWidget::mousePressEvent(QMouseEvent *event) {
 }
 
 float GLWidget::getDxF(QPointF *to, QPointF *from, bool adjusted){
-	int winX = this->geometry().bottomRight().x();
 	float deltaX = to->x() - from->x();
 	if(adjusted)
-		deltaX = deltaX / (winX * 0.5 * (1.0 + increment * scale));
+		deltaX = deltaX / (centerX * (1.0 + increment * scale));
 	else
-		deltaX = deltaX / (winX * 0.5);
+		deltaX = deltaX / centerX;
 	return deltaX;
 }
 
 float GLWidget::getDyF(QPointF *to, QPointF *from, bool adjusted){
-	int winY = this->geometry().bottomRight().y();
 	float deltaY = from->y() - to->y();
 	if(adjusted)
-		deltaY = deltaY / (winY * 0.5 * (1.0 + increment * scale));
+		deltaY = deltaY / (centerY * (1.0 + increment * scale));
 	else
-		deltaY = deltaY / (winY * 0.5);
+		deltaY = deltaY / centerY;
 	return deltaY;
 }
 
@@ -143,13 +159,14 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
 	if(pressed != Qt::NoButton){
 		switch(pressed){
 			case Qt::LeftButton:
+				totalChangeX += getDxF(ePosF, lastPos, false);
+				totalChangeY += getDyF(ePosF, lastPos, false);
 				glTranslatef(getDxF(ePosF, lastPos, true), getDyF(ePosF, lastPos, true), 0);
-				lastPos->setX(event->x());
-				lastPos->setY(event->y()); 
-				//half the window width or height because 0 is at center, scaled appropriately
 				GLWidget::drawGraph();
 				glEnd();
 				swapBuffers();
+				lastPos->setX(event->x());
+				lastPos->setY(event->y()); 
 				break;
 			default:
 				break;
