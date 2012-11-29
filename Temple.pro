@@ -4,11 +4,11 @@
 
 TEMPLATE = app
 TARGET = 
-DEPENDPATH += . old
-INCLUDEPATH += . old
+DEPENDPATH += 
+INCLUDEPATH += 
 
 # Input
-HEADERS += temple.h graph.h
-SOURCES += temple.cpp graph.cpp
+HEADERS += temple.h graph.h lang.h
+SOURCES += temple.cpp graph.cpp lang.cpp
 
 QT += opengl

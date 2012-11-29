@@ -8,6 +8,7 @@
 #define TEMPLE_H
 
 #include "graph.h"
+#include "lang.h"
 #include <QMainWindow>
 #include <QApplication>
 #include <QWidget>
@@ -27,32 +28,46 @@
 class TempleWin : public QMainWindow {
 	Q_OBJECT
 	
-	public:
-		TempleWin(QWidget *parent = 0);
-		
-	//public slots:
-		//void zoomIn();
-		//void zoomOut();
-		
-	private:
-    	QLabel *label;
-    	GLWidget *w;
+public:
+	TempleWin(QWidget *parent = 0);
+	TempleLang *lang;
+	
+//public slots:
+	//void zoomIn();
+	//void zoomOut();
+	
+private:
+	QLabel *label;
+	GLWidget *w;
 };
 
 /* \x41\x41\x41\x41\x41\x41\x41 */
 class TBar : public QWidget {
 	Q_OBJECT
 	
-	public:
-		TBar(QWidget *parent);
-		QFile *file;
-		QTextStream *out;
+public:
+	TBar(QWidget *parent, TempleLang *lang);
+	TempleLang *blang;
+	QFile *file;
+	QTextStream *out;
 		
-	private slots:
-	    void onByte();
-    	void onWord();
-    	void onDoub();
-    	void onQuad();	
+private slots:
+    void onByte();
+	void onWord();
+	void onDoub();
+	void onQuad();	
+};
+
+class TDialog : public QDialog {
+	Q_OBJECT
+
+public:
+	TDialog(QWidget *parent);
+	~TDialog();
+
+private slots:
+	onOk();
+	onCancel();
 };
 
 #endif

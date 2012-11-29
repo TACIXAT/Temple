@@ -3,7 +3,8 @@
 #include <unistd.h>
 
 /* \x41\x41\x41\x41\x41\x41\x41 */
-GLWidget::GLWidget(QWidget *parent) : QGLWidget(parent) {
+GLWidget::GLWidget(QWidget *parent, TempleLang *lang) : QGLWidget(parent) {
+	glang = lang;
     setMouseTracking(true);
     lastPos = new QPointF(-1.0,-1.0);
     offsetX = 0.0;
@@ -30,9 +31,9 @@ void GLWidget::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
     centerX = this->geometry().bottomRight().x() / 2.0f;
 	centerY = this->geometry().bottomRight().y() / 2.0f;
-    glMatrixMode(GL_PROJECTION);
-    /*glLoadIdentity();
-    glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0); // set origin to bottom left corner
+    /*glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrthof(0, 1, 1, 0, -1.0, 1.0); // set origin to bottom left corner
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();//*/
 }
@@ -59,8 +60,10 @@ void GLWidget::drawGraph(){
 }
 
 //Change zoom center to be at mouse location rather than originally drawn center
-void GLWidget::zoomIn(QPointF *to){
-	QPointF *origin = new QPointF(centerX, centerY);
+/*void GLWidget::zoomIn(QPointF *to){
+	float modCenterX = centerX + totalChangeX * (this->geometry().bottomRight().x());
+	float modCenterY = centerY + totalChangeY * (this->geometry().bottomRight().y());
+	QPointF *origin = new QPointF(modCenterX, modCenterY);
 
 	//printf("%f\t%f\n", to->x(), to->y());
 
@@ -72,20 +75,104 @@ void GLWidget::zoomIn(QPointF *to){
 	float next = 1.0 + increment * scale;
 	float zoom = next / base;
 	
-	dx -= totalChangeX;
-	dy -= totalChangeY;
+	dx = totalChangeX - dx;
+	dy = totalChangeY - dy;
 	
-	//printf("%f\t%f\n\n", dx, dy);
+	dx *= (zoom - 1.0);
+	dy *= (zoom - 1.0);
 	
-	glTranslatef(dx, dy, 0);		//move back (from origin => to)
+	totalChangeX += dx;
+	totalChangeY += dy;	
+	//totalChangeX -= dx * (zoom - 1.0);
+	//totalChangeY -= dy * (zoom - 1.0);
+	printf("%f\t%f\n", dx, dy);
+	printf("%f\t%f\n", totalChangeX, totalChangeY);
+	printf("%f\t%f\n", to->x(), to->y());
+	printf("%f\t%f\n", modCenterX, modCenterY);
+	printf("%f\t%f\n\n", centerX, centerY);
+	if(scale <= 2)
+		glTranslatef(dx, dy, 0);		//move back (from origin => to)
 	glScalef(zoom, zoom, 0);
-	glTranslatef(-dx, -dy, 0);		//negative for move to origin, this happens first
+	//glTranslatef(dx, dy, 0);		//negative for move to origin, this happens first
+	GLWidget::drawGraph();
+	glEnd();
+	swapBuffers();
+}//*/
+
+//Change zoom center to be at mouse location rather than originally drawn center
+void GLWidget::zoomIn(QPointF *to){
+	float base = 1.0 + increment * scale;
+	scale += (scale != range[1]) ? 1 : 0;
+	float next = 1.0 + increment * scale;
+	float zoom = next / base;
+	int screenX = this->geometry().bottomRight().x();
+	int screenY = this->geometry().bottomRight().y();
+
+	//xorg is click point to screen origin and x
+	float xorg = (to->x() - screenX * 0.5f) / (screenX * 0.5);
+	float yorg = (to->y() - screenY * 0.5f) / (screenY * 0.5);
+	//xvec is x component of vector between true origin and xorg
+	//totalChangeX should be x component of vector between origin and true origin
+	printf("clk: %f\t%f\n", xorg, yorg);
+	printf("org: %f\t%f\n", totalChangeX, totalChangeY);
+
+	float xvec = xorg - totalChangeX;
+	float yvec = yorg + totalChangeY;
+
+	printf("cto: %f\t%f\n", xvec, yvec);
+	printf("czo: %f\t%f\n", xvec * zoom, yvec * zoom);
+
+	xvec = xvec * zoom - xvec;
+	yvec = yvec * zoom - yvec;
+	//debug printing xvec, new xvec, and diff
+	printf("dif: %f\t%f\n\n", xvec, yvec);
+	//totalChangeX -= xvec * (1.0 + increment * scale);
+	//totalChangeY += yvec * (1.0 + increment * scale);
+
+	glTranslatef(-xvec, yvec, 0);		
+	glScalef(zoom, zoom, 0);
+	//glTranslatef(totalChangeX * base,  totalChangeY * base, 0);
 	GLWidget::drawGraph();
 	glEnd();
 	swapBuffers();
 }
 
 void GLWidget::zoomOut(QPointF *to){
+	float base = 1.0 + increment * scale;
+	scale += (scale != range[0]) ? -1 : 0;
+	float next = 1.0 + increment * scale;
+	float zoom = next / base;
+	int screenX = this->geometry().bottomRight().x();
+	int screenY = this->geometry().bottomRight().y();
+
+	//xorg is click point to screen origin and x
+	float xorg = (to->x() - screenX * 0.5f) / (screenX * 0.5);
+	float yorg = (to->y() - screenY * 0.5f) / (screenY * 0.5);
+	//xvec is x component of vector between true origin and xorg
+	//totalChangeX should be x component of vector between origin and true origin
+	printf("clk: %f\t%f\n", xorg, yorg);
+	printf("org: %f\t%f\n", totalChangeX, totalChangeY);
+
+	float xvec = xorg - totalChangeX;
+	float yvec = yorg + totalChangeY;
+
+	printf("cto: %f\t%f\n", xvec, yvec);
+	printf("czo: %f\t%f\n", xvec * zoom, yvec * zoom);
+
+	xvec = xvec * zoom - xvec;
+	yvec = yvec * zoom - yvec;
+	//debug printing xvec, new xvec, and diff
+	printf("dif: %f\t%f\n\n", xvec, yvec);
+
+	glTranslatef(-xvec, yvec, 0);		
+	glScalef(zoom, zoom, 0);
+	//glTranslatef(totalChangeX * base,  totalChangeY * base, 0);
+	GLWidget::drawGraph();
+	glEnd();
+	swapBuffers();
+}
+
+/*void GLWidget::zoomOut(QPointF *to){
 	QPointF *origin = new QPointF(centerX, centerY);
 	
 	//printf("%f\t%f\n", to->x(), to->y());
@@ -98,18 +185,21 @@ void GLWidget::zoomOut(QPointF *to){
 	float next = 1.0 + increment * scale;
 	float zoom = next / base;
 	
-	dx -= totalChangeX;
-	dy -= totalChangeY;
+	dx = totalChangeX - dx;
+	dy = totalChangeY - dy;
+	
+	//totalChangeX += dx * (1.0 - zoom);
+	//totalChangeY += dy * (1.0 - zoom);
 	
 	//printf("%f\t%f\n\n", dx, dy);
 
-	glTranslatef(dx, dy, 0);		//move back (from origin => to)
+	//glTranslatef(-dx, -dy, 0);		//move back (from origin => to)
 	glScalef(zoom, zoom, 0);
-	glTranslatef(-dx, -dy, 0);		//negative for move to origin, this happens first
+	glTranslatef(dx, dy, 0);		//negative for move to origin, this happens first
 	GLWidget::drawGraph();
 	glEnd();
 	swapBuffers();
-}
+}//*/
 
 void GLWidget::mousePressEvent(QMouseEvent *event) {
 	lastPos->setX(event->posF().x());
@@ -138,6 +228,7 @@ float GLWidget::getDyF(QPointF *to, QPointF *from, bool adjusted){
 void GLWidget::mouseDoubleClickEvent(QMouseEvent *event) {
 	Qt::MouseButtons pressed = event->buttons();
 	QPointF *to = new QPointF(event->posF().x(), event->posF().y());
+	//QPointF *to = new QPointF(centerX, centerY);
 	if(pressed != Qt::NoButton){
 		switch(pressed){
 			case Qt::LeftButton:

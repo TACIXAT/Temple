@@ -1,6 +1,6 @@
 #ifndef GRAPH_H
 #define GRAPH_H
-
+#include "lang.h"
 #include <QtOpenGL/QGLWidget>
 #include <QtGui/QMouseEvent>
 
@@ -8,9 +8,10 @@ class GLWidget : public QGLWidget {
     Q_OBJECT
 
 public:
-    GLWidget(QWidget *parent = NULL);
+    GLWidget(QWidget *parent = NULL, TempleLang *lang = NULL);
     void zoomIn(QPointF *to);
     void zoomOut(QPointF *to);
+    TempleLang *glang;
 
 protected:
     void initializeGL();

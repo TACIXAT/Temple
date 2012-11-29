@@ -6,12 +6,15 @@
 
 #include "temple.h"
 #include "graph.h"
+#include "lang.h"
 #define DEBUG 1
 
 /* \x41\x41\x41\x41\x41\x41\x41 */
 TempleWin::TempleWin(QWidget *parent)
 	: QMainWindow(parent) {
-	
+
+	lang = new TempleLang();
+
 	//menu
 	QAction *quit = new QAction("&Quit", this);
 	
@@ -24,12 +27,12 @@ TempleWin::TempleWin(QWidget *parent)
 	//toolbar
 	QToolBar *tb = new QToolBar("TOOLBAR");
 	
-	TBar *tbw = new TBar(this);
+	TBar *tbw = new TBar(this, lang);
 	tb->addWidget(tbw);
 	tb->setMovable(false);
 	addToolBar(Qt::RightToolBarArea, tb);
 	
-	TempleWin::w = new GLWidget();
+	TempleWin::w = new GLWidget(this, lang);
 	w->show();
 	w->resize(200,200);
 	setCentralWidget(w);
@@ -44,9 +47,10 @@ void TempleWin::zoomOut() {
 }//*/
 
 /* \x41\x41\x41\x41\x41\x41\x41 */
-TBar::TBar(QWidget *parent)
+TBar::TBar(QWidget *parent, TempleLang *lang)
 	: QWidget(parent) {
 	
+	blang = lang;
 	TBar::file = new QFile("/tmp/storage.txt");
 
    	if(TBar::file->open(QFile::WriteOnly)) {
@@ -173,6 +177,12 @@ void TBar::onByte(){
 	//QTextStream out(&file);
 	*TBar::out << "B:";
 	TBar::out->flush();
+
+	blang->addByte("genericByte", UNSIGNED);
+	std::list<TempleLang::Container *>::iterator i;
+	for(i=blang->ll->begin(); i != blang->ll->end(); i++)
+		std::cout << (*i)->getName() << std::endl;
+	std::cout << std::endl;
 	
 }
 
