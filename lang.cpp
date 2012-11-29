@@ -90,3 +90,30 @@ int TempleLang::addQuad(std::string cname, bool sign) {
 	return 0;
 }
 
+int TempleLang::generatePython(){
+	std::cout << "f = open(\'/path/to/targetFile\')" << std::endl;
+	std::list<TempleLang::Container *>::iterator i;
+	
+	for(i = ll->begin(); i != ll->end(); i++) {
+		int size = 0;
+		switch((*i)->getType()) {
+			case BYTE:
+				size = 1;
+				break;
+			case WORD:
+				size = 2;
+				break;
+			case DOUB:
+				size = 4;
+				break;
+			case QUAD:
+				size = 8;
+				break;
+		}
+
+		std::cout << (*i)->getName() << " = f.read(" << size << ")" << std::endl;
+	}
+
+	std::cout << "==========" << std::endl;
+	return 0;
+}

@@ -14,7 +14,7 @@ TempleWin::TempleWin(QWidget *parent)
 	: QMainWindow(parent) {
 
 	lang = new TempleLang();
-
+	std::cout << "==========" << std::endl;
 	//menu
 	QAction *quit = new QAction("&Quit", this);
 	
@@ -142,6 +142,7 @@ TBar::TBar(TempleWin *parent, TempleLang *lang)
 	QPushButton *terminator = new QPushButton("\\0");
 	terminator->setFixedSize(35,35);
 	terminator->setToolTip("Terminator");
+	connect(terminator, SIGNAL(clicked()), this, SLOT(onTerminator()));
 	
 	//layout
 	QGridLayout *grid = new QGridLayout(this);
@@ -206,6 +207,10 @@ void TBar::onQuad(){
 	}
 }
 
+void TBar::onTerminator(){
+	blang->generatePython();
+}
+
 /* \x41\x41\x41\x41\x41\x41\x41 */
 TDialog::TDialog(QWidget *parent, Qt::WindowFlags flags, TempleLang *lang, int ctype)
 	: QDialog(parent, flags) {
@@ -254,9 +259,9 @@ void TDialog::onOk(){
 
 	std::list<TempleLang::Container *>::iterator i;
 	
-	for(i=dlang->ll->begin(); i != dlang->ll->end(); i++)
-		std::cout << (*i)->getType() << "\t" << (*i)->getName() << std::endl;
-	std::cout << std::endl;
+	//for(i=dlang->ll->begin(); i != dlang->ll->end(); i++)
+	//	std::cout << (*i)->getType() << "\t" << (*i)->getName() << std::endl;
+	//std::cout << "==========" << std::endl;
 
 	accept();
 }

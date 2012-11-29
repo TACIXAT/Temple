@@ -24,7 +24,9 @@ public:
 	int addByte(std::string cname, bool sign);
 	int addWord(std::string cname, bool sign);
 	int addDoub(std::string cname, bool sign);
-	int addQuad(std::string cname, bool sign);		
+	int addQuad(std::string cname, bool sign);	
+	int generatePython();
+
 protected:
 	struct Container {
 		int setName(std::string cname);

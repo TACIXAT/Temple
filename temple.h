@@ -57,6 +57,7 @@ private slots:
 	void onWord();
 	void onDoub();
 	void onQuad();	
+	void onTerminator();
 };
 
 class TDialog : public QDialog {

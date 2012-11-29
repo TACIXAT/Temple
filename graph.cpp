@@ -5,8 +5,7 @@
 /* \x41\x41\x41\x41\x41\x41\x41 */
 GLWidget::GLWidget(QWidget *parent, TempleLang *lang) : QGLWidget(parent) {
 	glang = lang;
-	std::cout << &glang << std::endl;
-	std::cout << glang << std::endl;
+
     setMouseTracking(true);
     lastPos = new QPointF(-1.0,-1.0);
     offsetX = 0.0;
@@ -85,7 +84,7 @@ void GLWidget::drawGraph(){
 	float modCenterY = centerY + totalChangeY * (this->geometry().bottomRight().y());
 	QPointF *origin = new QPointF(modCenterX, modCenterY);
 
-	//printf("%f\t%f\n", to->x(), to->y());
+	////printf("%f\t%f\n", to->x(), to->y());
 
 	float dx = getDxF(to, origin, false);	//this move is from the origin to the original position
 	float dy = getDyF(to, origin, false);
@@ -105,11 +104,11 @@ void GLWidget::drawGraph(){
 	totalChangeY += dy;	
 	//totalChangeX -= dx * (zoom - 1.0);
 	//totalChangeY -= dy * (zoom - 1.0);
-	printf("%f\t%f\n", dx, dy);
-	printf("%f\t%f\n", totalChangeX, totalChangeY);
-	printf("%f\t%f\n", to->x(), to->y());
-	printf("%f\t%f\n", modCenterX, modCenterY);
-	printf("%f\t%f\n\n", centerX, centerY);
+	//printf("%f\t%f\n", dx, dy);
+	//printf("%f\t%f\n", totalChangeX, totalChangeY);
+	//printf("%f\t%f\n", to->x(), to->y());
+	//printf("%f\t%f\n", modCenterX, modCenterY);
+	//printf("%f\t%f\n\n", centerX, centerY);
 	if(scale <= 2)
 		glTranslatef(dx, dy, 0);		//move back (from origin => to)
 	glScalef(zoom, zoom, 0);
@@ -133,19 +132,19 @@ void GLWidget::zoomIn(QPointF *to){
 	float yorg = (to->y() - screenY * 0.5f) / (screenY * 0.5);
 	//xvec is x component of vector between true origin and xorg
 	//totalChangeX should be x component of vector between origin and true origin
-	printf("clk: %f\t%f\n", xorg, yorg);
-	printf("org: %f\t%f\n", totalChangeX, totalChangeY);
+	//printf("clk: %f\t%f\n", xorg, yorg);
+	//printf("org: %f\t%f\n", totalChangeX, totalChangeY);
 
 	float xvec = xorg - totalChangeX;
 	float yvec = yorg + totalChangeY;
 
-	printf("cto: %f\t%f\n", xvec, yvec);
-	printf("czo: %f\t%f\n", xvec * zoom, yvec * zoom);
+	//printf("cto: %f\t%f\n", xvec, yvec);
+	//printf("czo: %f\t%f\n", xvec * zoom, yvec * zoom);
 
 	xvec = xvec * zoom - xvec;
 	yvec = yvec * zoom - yvec;
 	//debug printing xvec, new xvec, and diff
-	printf("dif: %f\t%f\n\n", xvec, yvec);
+	//printf("dif: %f\t%f\n\n", xvec, yvec);
 	//totalChangeX -= xvec * (1.0 + increment * scale);
 	//totalChangeY += yvec * (1.0 + increment * scale);
 
@@ -170,19 +169,19 @@ void GLWidget::zoomOut(QPointF *to){
 	float yorg = (to->y() - screenY * 0.5f) / (screenY * 0.5);
 	//xvec is x component of vector between true origin and xorg
 	//totalChangeX should be x component of vector between origin and true origin
-	printf("clk: %f\t%f\n", xorg, yorg);
-	printf("org: %f\t%f\n", totalChangeX, totalChangeY);
+	//printf("clk: %f\t%f\n", xorg, yorg);
+	//printf("org: %f\t%f\n", totalChangeX, totalChangeY);
 
 	float xvec = xorg - totalChangeX;
 	float yvec = yorg + totalChangeY;
 
-	printf("cto: %f\t%f\n", xvec, yvec);
-	printf("czo: %f\t%f\n", xvec * zoom, yvec * zoom);
+	//printf("cto: %f\t%f\n", xvec, yvec);
+	//printf("czo: %f\t%f\n", xvec * zoom, yvec * zoom);
 
 	xvec = xvec * zoom - xvec;
 	yvec = yvec * zoom - yvec;
 	//debug printing xvec, new xvec, and diff
-	printf("dif: %f\t%f\n\n", xvec, yvec);
+	//printf("dif: %f\t%f\n\n", xvec, yvec);
 
 	glTranslatef(-xvec, yvec, 0);		
 	glScalef(zoom, zoom, 0);
@@ -195,7 +194,7 @@ void GLWidget::zoomOut(QPointF *to){
 /*void GLWidget::zoomOut(QPointF *to){
 	QPointF *origin = new QPointF(centerX, centerY);
 	
-	//printf("%f\t%f\n", to->x(), to->y());
+	////printf("%f\t%f\n", to->x(), to->y());
 	
 	float dx = getDxF(to, origin, false);	//this move is from the origin to the original position
 	float dy = getDyF(to, origin, false);
@@ -211,7 +210,7 @@ void GLWidget::zoomOut(QPointF *to){
 	//totalChangeX += dx * (1.0 - zoom);
 	//totalChangeY += dy * (1.0 - zoom);
 	
-	//printf("%f\t%f\n\n", dx, dy);
+	////printf("%f\t%f\n\n", dx, dy);
 
 	//glTranslatef(-dx, -dy, 0);		//move back (from origin => to)
 	glScalef(zoom, zoom, 0);
@@ -283,7 +282,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event) {
 				break;
 		}
 	} /*else {
-		printf("no button %d %d\n", event->x(), event->y()); 	
+		//printf("no button %d %d\n", event->x(), event->y()); 	
 	}//*/
 }
 
