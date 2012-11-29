@@ -20,6 +20,8 @@
 //#include <QList>
 #include <QIcon>
 #include <QLabel>
+#include <QLineEdit>
+#include <QDialog>
 #include <QMenu>
 #include <QMenuBar>
 #include <QToolBar>
@@ -31,14 +33,14 @@ class TempleWin : public QMainWindow {
 public:
 	TempleWin(QWidget *parent = 0);
 	TempleLang *lang;
-	
+	GLWidget *widGl;
 //public slots:
 	//void zoomIn();
 	//void zoomOut();
 	
 private:
 	QLabel *label;
-	GLWidget *w;
+	
 };
 
 /* \x41\x41\x41\x41\x41\x41\x41 */
@@ -46,10 +48,11 @@ class TBar : public QWidget {
 	Q_OBJECT
 	
 public:
-	TBar(QWidget *parent, TempleLang *lang);
+	TBar(TempleWin *parent, TempleLang *lang);
 	TempleLang *blang;
 	QFile *file;
 	QTextStream *out;
+	GLWidget *widGl;
 		
 private slots:
     void onByte();
@@ -62,12 +65,14 @@ class TDialog : public QDialog {
 	Q_OBJECT
 
 public:
-	TDialog(QWidget *parent);
-	~TDialog();
+	TDialog(QWidget *parent, Qt::WindowFlags flags, TempleLang *lang, int ctype);
+	TempleLang *dlang;
+	QLineEdit *nameIn;
+	int type;
 
 private slots:
-	onOk();
-	onCancel();
+	void onOk();
+	void onCancel();
 };
 
 #endif

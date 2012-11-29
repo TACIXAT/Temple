@@ -32,10 +32,10 @@ TempleWin::TempleWin(QWidget *parent)
 	tb->setMovable(false);
 	addToolBar(Qt::RightToolBarArea, tb);
 	
-	TempleWin::w = new GLWidget(this, lang);
-	w->show();
-	w->resize(200,200);
-	setCentralWidget(w);
+	widGl = new GLWidget(this, lang);
+	widGl->show();
+	widGl->resize(200,200);
+	setCentralWidget(widGl);
 }
 
 /*void TempleWin::zoomIn() {
@@ -47,9 +47,10 @@ void TempleWin::zoomOut() {
 }//*/
 
 /* \x41\x41\x41\x41\x41\x41\x41 */
-TBar::TBar(QWidget *parent, TempleLang *lang)
+TBar::TBar(TempleWin *parent, TempleLang *lang)
 	: QWidget(parent) {
 	
+	widGl = parent->widGl;
 	blang = lang;
 	TBar::file = new QFile("/tmp/storage.txt");
 
@@ -175,30 +176,98 @@ TBar::TBar(QWidget *parent, TempleLang *lang)
 //currently useless
 void TBar::onByte(){
 	//QTextStream out(&file);
-	*TBar::out << "B:";
-	TBar::out->flush();
-
-	blang->addByte("genericByte", UNSIGNED);
-	std::list<TempleLang::Container *>::iterator i;
-	for(i=blang->ll->begin(); i != blang->ll->end(); i++)
-		std::cout << (*i)->getName() << std::endl;
-	std::cout << std::endl;
-	
+	TDialog *die = new TDialog(this, 0, blang, BYTE);
+	if(die->exec() == QDialog::Accepted){ 
+		widGl->redraw();
+		*TBar::out << "B:";
+		TBar::out->flush();
+	}
 }
 
 void TBar::onWord(){
-	*TBar::out << "W:";
-	TBar::out->flush();
+	TDialog *die = new TDialog(this, 0, blang, WORD);
+	if(die->exec() == QDialog::Accepted){
+		widGl->redraw(); 
+		*TBar::out << "W:";
+		TBar::out->flush();
+	}
 }
 
 void TBar::onDoub(){
-	*TBar::out << "D:";
-	TBar::out->flush();
+	TDialog *die = new TDialog(this, 0, blang, DOUB);
+	if(die->exec() == QDialog::Accepted){ 
+		widGl->redraw();
+		*TBar::out << "D:";
+		TBar::out->flush();
+	}
 }
 
 void TBar::onQuad(){
-	*TBar::out << "Q:";
-	TBar::out->flush();
+	TDialog *die = new TDialog(this, 0, blang, QUAD);
+	if(die->exec() == QDialog::Accepted){ 
+		widGl->redraw();
+		*TBar::out << "Q:";
+		TBar::out->flush();
+	}
+}
+
+/* \x41\x41\x41\x41\x41\x41\x41 */
+TDialog::TDialog(QWidget *parent, Qt::WindowFlags flags, TempleLang *lang, int ctype)
+	: QDialog(parent, flags) {
+	setModal(true);
+
+	dlang = lang;
+	type = ctype;
+
+	QGridLayout *grid = new QGridLayout(this);
+
+	QLabel *nameLabel = new QLabel("Name:");
+	nameIn = new QLineEdit();
+	grid->addWidget(nameLabel, 0, 0);
+	grid->addWidget(nameIn, 0, 1, 1, 2);
+
+	QPushButton *ok = new QPushButton("Ok");
+	ok->setDefault(true);
+	connect(ok, SIGNAL(clicked()), this, SLOT(onOk()));
+
+	QPushButton *cancel = new QPushButton("Cancel");
+	connect(cancel, SIGNAL(clicked()), this, SLOT(onCancel()));
+
+	grid->addWidget(ok, 1, 1);
+	grid->addWidget(cancel, 1, 2);
+
+}
+
+void TDialog::onOk(){
+	std::string nombre = nameIn->text().toStdString();
+	bool sign = false;
+
+	switch(type) {
+		case BYTE:
+			dlang->addByte(nombre, sign);
+			break;
+		case WORD:
+			dlang->addWord(nombre, sign);
+			break;
+		case DOUB:
+			dlang->addDoub(nombre, sign);
+			break;
+		case QUAD:
+			dlang->addQuad(nombre, sign);
+			break;
+	}
+
+	std::list<TempleLang::Container *>::iterator i;
+	
+	for(i=dlang->ll->begin(); i != dlang->ll->end(); i++)
+		std::cout << (*i)->getType() << "\t" << (*i)->getName() << std::endl;
+	std::cout << std::endl;
+
+	accept();
+}
+
+void TDialog::onCancel(){
+	reject();
 }
 
 /* \x41\x41\x41\x41\x41\x41\x41 */

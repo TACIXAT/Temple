@@ -45,18 +45,48 @@ void GLWidget::paintGL() {
 
 /* UTILITY */
 void GLWidget::drawGraph(){
+	int count = 0;
+	std::cout << "l50" << std::endl;
 	glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(0.2f, 0.2f, 1.0f);
-    glRectf(-0.1f, 0.4f, 0.1f, 0.3f);
-    
-    glColor3f(1.0f, 0.2f, 0.2f);
-    glRectf(-0.1f, 0.25f, 0.0f, 0.0f);
-    
-    glColor3f(1.0f, 0.2f, 0.2f);
-    glRectf(-0.6f, 0.25f, -0.5f, 0.0f);
-    
-    glColor3f(0.2f, 1.0f, 0.2f);
-    glRectf(-0.5f, 0.75f, -0.3f, 0.65f);
+	std::cout << "l52" << std::endl;
+
+	std::list<TempleLang::Container *>::iterator i;
+	std::cout << (void *) glang << std::endl;
+	//glang becomes null
+	for(i=glang->ll->begin(); i != glang->ll->end(); i++){
+		std::cout << "l54" << std::endl;
+		int typo = (*i)->getType(); 
+		int size;
+		std::cout << "l56" << std::endl;
+		switch(typo) {
+			case BYTE:
+				size = 1;
+				break;
+			case WORD:
+				size = 2;
+				break;
+			case DOUB:
+				size = 4;
+				break;
+			case QUAD:
+				size = 8;
+				break;
+		}
+		std::cout << "l71" << std::endl;
+		float hstart = 0.0 - 0.1f * size;
+		float hend = 0.1f * size;
+		float vstart = 0.9 - 0.2 *  count;
+		float vend = 0.8 - 0.2 * count;
+		glColor3f(0.2f, 0.1f*size, 0.4f);
+    	glRectf(hstart, vstart, hend, vend);
+
+    	count++;
+	}
+	std::cout << "l82" << std::endl;
+}
+
+void GLWidget::redraw(){
+	drawGraph();
 }
 
 //Change zoom center to be at mouse location rather than originally drawn center

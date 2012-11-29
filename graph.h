@@ -12,6 +12,7 @@ public:
     void zoomIn(QPointF *to);
     void zoomOut(QPointF *to);
     TempleLang *glang;
+    void redraw();
 
 protected:
     void initializeGL();
