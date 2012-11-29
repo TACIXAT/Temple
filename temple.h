@@ -33,7 +33,6 @@ class TempleWin : public QMainWindow {
 public:
 	TempleWin(QWidget *parent = 0);
 	TempleLang *lang;
-	GLWidget *widGl;
 //public slots:
 	//void zoomIn();
 	//void zoomOut();
@@ -52,7 +51,6 @@ public:
 	TempleLang *blang;
 	QFile *file;
 	QTextStream *out;
-	GLWidget *widGl;
 		
 private slots:
     void onByte();

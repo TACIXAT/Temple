@@ -5,6 +5,8 @@
 /* \x41\x41\x41\x41\x41\x41\x41 */
 GLWidget::GLWidget(QWidget *parent, TempleLang *lang) : QGLWidget(parent) {
 	glang = lang;
+	std::cout << &glang << std::endl;
+	std::cout << glang << std::endl;
     setMouseTracking(true);
     lastPos = new QPointF(-1.0,-1.0);
     offsetX = 0.0;
@@ -46,18 +48,12 @@ void GLWidget::paintGL() {
 /* UTILITY */
 void GLWidget::drawGraph(){
 	int count = 0;
-	std::cout << "l50" << std::endl;
 	glClear(GL_COLOR_BUFFER_BIT);
-	std::cout << "l52" << std::endl;
-
 	std::list<TempleLang::Container *>::iterator i;
-	std::cout << (void *) glang << std::endl;
 	//glang becomes null
 	for(i=glang->ll->begin(); i != glang->ll->end(); i++){
-		std::cout << "l54" << std::endl;
 		int typo = (*i)->getType(); 
 		int size;
-		std::cout << "l56" << std::endl;
 		switch(typo) {
 			case BYTE:
 				size = 1;
@@ -72,21 +68,15 @@ void GLWidget::drawGraph(){
 				size = 8;
 				break;
 		}
-		std::cout << "l71" << std::endl;
-		float hstart = 0.0 - 0.1f * size;
-		float hend = 0.1f * size;
+		float hstart = 0.0 - 0.05f * size;
+		float hend = 0.05f * size;
 		float vstart = 0.9 - 0.2 *  count;
 		float vend = 0.8 - 0.2 * count;
-		glColor3f(0.2f, 0.1f*size, 0.4f);
+		glColor3f(0.2f, 0.2f*size, 0.4f);
     	glRectf(hstart, vstart, hend, vend);
 
     	count++;
 	}
-	std::cout << "l82" << std::endl;
-}
-
-void GLWidget::redraw(){
-	drawGraph();
 }
 
 //Change zoom center to be at mouse location rather than originally drawn center

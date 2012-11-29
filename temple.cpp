@@ -32,7 +32,7 @@ TempleWin::TempleWin(QWidget *parent)
 	tb->setMovable(false);
 	addToolBar(Qt::RightToolBarArea, tb);
 	
-	widGl = new GLWidget(this, lang);
+	GLWidget *widGl = new GLWidget(this, lang);
 	widGl->show();
 	widGl->resize(200,200);
 	setCentralWidget(widGl);
@@ -50,7 +50,6 @@ void TempleWin::zoomOut() {
 TBar::TBar(TempleWin *parent, TempleLang *lang)
 	: QWidget(parent) {
 	
-	widGl = parent->widGl;
 	blang = lang;
 	TBar::file = new QFile("/tmp/storage.txt");
 
@@ -178,7 +177,6 @@ void TBar::onByte(){
 	//QTextStream out(&file);
 	TDialog *die = new TDialog(this, 0, blang, BYTE);
 	if(die->exec() == QDialog::Accepted){ 
-		widGl->redraw();
 		*TBar::out << "B:";
 		TBar::out->flush();
 	}
@@ -187,7 +185,6 @@ void TBar::onByte(){
 void TBar::onWord(){
 	TDialog *die = new TDialog(this, 0, blang, WORD);
 	if(die->exec() == QDialog::Accepted){
-		widGl->redraw(); 
 		*TBar::out << "W:";
 		TBar::out->flush();
 	}
@@ -196,7 +193,6 @@ void TBar::onWord(){
 void TBar::onDoub(){
 	TDialog *die = new TDialog(this, 0, blang, DOUB);
 	if(die->exec() == QDialog::Accepted){ 
-		widGl->redraw();
 		*TBar::out << "D:";
 		TBar::out->flush();
 	}
@@ -205,7 +201,6 @@ void TBar::onDoub(){
 void TBar::onQuad(){
 	TDialog *die = new TDialog(this, 0, blang, QUAD);
 	if(die->exec() == QDialog::Accepted){ 
-		widGl->redraw();
 		*TBar::out << "Q:";
 		TBar::out->flush();
 	}
