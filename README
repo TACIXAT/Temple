@@ -1,17 +1,18 @@
 Temple is for the rapid (graphical) creation of file format templates.
 
-The program will be written with QT and C++. In active development through the year end. This is my first C++ program, please notify me of any glaring errors.
+The program will be written with QT and C++. In active development through the year end. This is my first C++ program, take it with some salt.
 
 Feature goals: 
-	Graphical file format template building.
+	Implement more types.
+	Define a language?
 	Display of template over the hexdump of a file.
 	Automatic generation of Python from template.
 
 The current types are:
-	Byte
-	Word
-	Double Word
-	Quad Word
+	Byte*
+	Word*
+	Double Word*
+	Quad Word*
 	String
 		Requires either a length specifier or a terminator.
 	Variable Length
@@ -20,6 +21,7 @@ The current types are:
 		Magic number sort of deal. A value that should always be the same.
 	Unknown Chunk
 		Binary blob.
+	*Implemented
 
 The meta types (ie: applied to the types) are:
 	Length
